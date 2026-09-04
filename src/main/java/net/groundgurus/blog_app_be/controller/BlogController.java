@@ -1,5 +1,6 @@
 package net.groundgurus.blog_app_be.controller;
 
+import lombok.RequiredArgsConstructor;
 import net.groundgurus.blog_app_be.mapper.BlogMapper;
 import net.groundgurus.blog_app_be.model.Blog;
 import net.groundgurus.blog_app_be.dto.BlogDTO;
@@ -20,14 +21,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/blog")
+@RequiredArgsConstructor
 public class BlogController {
     private final BlogService blogService;
     private final BlogMapper blogMapper;
-
-    public BlogController(BlogService blogService, BlogMapper blogMapper) {
-        this.blogService = blogService;
-        this.blogMapper = blogMapper;
-    }
 
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody BlogDTO blogDTO) {

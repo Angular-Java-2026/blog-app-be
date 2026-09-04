@@ -14,3 +14,7 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
+app:
+  jwt:
+    token: AeuYJNsHQHWD32bdAip8gx0fvsamxKz76UvxdolxNOY= # 256-bit key for HS256
+    expiration-ms: 86400000 # 1 day validity

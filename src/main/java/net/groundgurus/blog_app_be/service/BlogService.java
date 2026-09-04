@@ -1,5 +1,6 @@
 package net.groundgurus.blog_app_be.service;
 
+import lombok.RequiredArgsConstructor;
 import net.groundgurus.blog_app_be.mapper.BlogMapper;
 import net.groundgurus.blog_app_be.dto.BlogDTO;
 import net.groundgurus.blog_app_be.model.Blog;
@@ -13,16 +14,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class BlogService {
     public static final int MAX_BLOGS = 10;
 
     private final BlogRepository blogRepository;
     private final BlogMapper blogMapper;
-
-    public BlogService(BlogRepository blogRepository, BlogMapper blogMapper) {
-        this.blogRepository = blogRepository;
-        this.blogMapper = blogMapper;
-    }
 
     public void createBlog(BlogDTO blogDTO) {
         blogDTO.setBlogId(UUID.randomUUID());
