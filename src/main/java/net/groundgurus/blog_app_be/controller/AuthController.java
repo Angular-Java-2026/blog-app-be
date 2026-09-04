@@ -2,15 +2,18 @@ package net.groundgurus.blog_app_be.controller;
 
 import lombok.RequiredArgsConstructor;
 import net.groundgurus.blog_app_be.dto.UserInfoDTO;
-import net.groundgurus.blog_app_be.model.UserInfo;
 import net.groundgurus.blog_app_be.request.AuthRequest;
+import net.groundgurus.blog_app_be.response.AuthResponse;
 import net.groundgurus.blog_app_be.service.UserInfoService;
 import net.groundgurus.blog_app_be.util.JwtUtils;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,21 +23,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    @Value("${app.jwt.secret}")
-    private String jwtSecret;
-
-    @Value("${app.jwt.expiration-ms}")
-    private int jwtExpirationMs;
-
+    public static final String AUTHENTICATION_ERROR_MSG = "Invalid username or password";
     private final UserInfoService userInfoService;
     private final AuthenticationManager authenticationManager;
+    private final JwtUtils jwtUtils;
 
-    @PostMapping("/addNewUser")
-    public String addNewUser(@RequestBody UserInfoDTO userInfo) {
-        return userInfoService.addUser(userInfo);
+    @PostMapping("/addUser")
+    public ResponseEntity<AuthResponse> addNewUser(@RequestBody UserInfoDTO userInfo) {
+        String responseMessage = userInfoService.addUser(userInfo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new AuthResponse(responseMessage));
     }
-
-    // Removed the role checks here as they are already managed in SecurityConfig
 
     @PostMapping("/generateToken")
     public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) {
@@ -42,9 +40,14 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
         );
         if (authentication.isAuthenticated()) {
-            return JwtUtils.generateToken(authRequest.getUsername(), jwtSecret, jwtExpirationMs);
+            return jwtUtils.generateToken(authRequest.getUsername());
         } else {
             throw new UsernameNotFoundException("Invalid user request!");
         }
+    }
+
+    @ExceptionHandler({AuthenticationException.class, UsernameNotFoundException.class})
+    public ResponseEntity<AuthResponse> handleAuthenticationException(Exception e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponse(AUTHENTICATION_ERROR_MSG));
     }
 }
