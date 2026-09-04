@@ -12,6 +12,7 @@ public class BlogMapper implements Mapper<Blog, BlogDTO> {
                 .blogId(dto.getBlogId())
                 .title(dto.getTitle())
                 .subUrl(dto.getSubUrl())
+                .description(dto.getDescription())
                 .content(dto.getContent())
                 .build();
     }
@@ -22,6 +23,7 @@ public class BlogMapper implements Mapper<Blog, BlogDTO> {
                 .blogId(entity.getBlogId())
                 .title(entity.getTitle())
                 .subUrl(entity.getSubUrl())
+                .description(entity.getDescription())
                 .content(entity.getContent())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())

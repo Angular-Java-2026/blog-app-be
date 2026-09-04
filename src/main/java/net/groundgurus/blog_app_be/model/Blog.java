@@ -30,7 +30,9 @@ public class Blog {
     private String title;
     @Column(nullable = false, unique = true)
     private String subUrl;
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = false, length = 256)
+    private String description;
+    @Column(nullable = false, columnDefinition = "TEXT", length = 1024)
     private String content;
     @Column(name = "created_at")
     private LocalDateTime createdAt;

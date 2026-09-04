@@ -16,6 +16,7 @@ public class BlogDTO {
     private UUID blogId;
     private String title;
     private String subUrl;
+    private String description;
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
