@@ -19,11 +19,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static net.groundgurus.blog_app_be.constants.BlogConstants.AUTHENTICATION_ERROR_MSG;
+import static net.groundgurus.blog_app_be.constants.BlogConstants.INVALID_USER_REQUEST;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    public static final String AUTHENTICATION_ERROR_MSG = "Invalid username or password";
     private final UserInfoService userInfoService;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
@@ -42,7 +44,7 @@ public class AuthController {
         if (authentication.isAuthenticated()) {
             return jwtUtils.generateToken(authRequest.getUsername());
         } else {
-            throw new UsernameNotFoundException("Invalid user request!");
+            throw new UsernameNotFoundException(INVALID_USER_REQUEST);
         }
     }
 

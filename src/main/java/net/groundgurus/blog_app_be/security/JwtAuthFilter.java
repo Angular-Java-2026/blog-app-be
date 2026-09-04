@@ -19,14 +19,15 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Objects;
 
+import static net.groundgurus.blog_app_be.constants.BlogConstants.AUTH;
+import static net.groundgurus.blog_app_be.constants.BlogConstants.AUTHORIZATION;
+import static net.groundgurus.blog_app_be.constants.BlogConstants.BEARER;
+import static net.groundgurus.blog_app_be.constants.BlogConstants.TOKEN_LENGTH;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
-    public static final String BEARER = "Bearer ";
-    public static final String AUTHORIZATION = "Authorization";
-    public static final int TOKEN_LENGTH = 7;
-
     private final UserInfoService userInfoService;
     private final JwtUtils jwtUtils;
 
@@ -68,6 +69,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return request.getServletPath().startsWith("/auth/");
+        return request.getServletPath().startsWith(AUTH);
     }
 }

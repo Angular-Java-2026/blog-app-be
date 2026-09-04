@@ -4,9 +4,10 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
+import net.groundgurus.blog_app_be.config.AppProperties;
 import net.groundgurus.blog_app_be.security.UserInfoDetails;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
+import org.apache.commons.lang3.Strings;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -17,22 +18,19 @@ import java.util.Date;
 import java.util.function.Function;
 
 @Component
+@RequiredArgsConstructor
 public class JwtUtils {
 
-    @Value("${app.jwt.secret}")
-    private String jwtSecret;
-
-    @Value("${app.jwt.expiration-ms}")
-    private long jwtExpirationMs;
+    private final AppProperties appProperties;
 
     private SecretKey getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
+        byte[] keyBytes = Decoders.BASE64.decode(appProperties.getJwt().getSecret());
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String generateToken(String username) {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime expiration = now.plus(jwtExpirationMs, ChronoUnit.MILLIS);
+        LocalDateTime expiration = now.plus(appProperties.getJwt().getExpirationMs(), ChronoUnit.MILLIS);
 
         return Jwts.builder()
                 .subject(username)
@@ -50,8 +48,8 @@ public class JwtUtils {
         return getClaimFromToken(token, Claims::getExpiration);
     }
 
-    public boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(DateUtils.convertToDateViaInstant(LocalDateTime.now()));
+    public boolean isTokenNotExpired(String token) {
+        return extractExpiration(token).after(DateUtils.convertToDateViaInstant(LocalDateTime.now()));
     }
 
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
@@ -62,11 +60,11 @@ public class JwtUtils {
     public boolean validateToken(String token, UserDetails userDetails) {
         String username = extractUsername(token);
         if (userDetails instanceof UserInfoDetails userInfoDetails) {
-            boolean matches = StringUtils.equals(username, userInfoDetails.getUsername())
-                    || StringUtils.equals(username, userInfoDetails.getEmail());
-            return matches && !isTokenExpired(token);
+            boolean matches = Strings.CS.equals(username, userInfoDetails.getUsername())
+                    || Strings.CS.equals(username, userInfoDetails.getEmail());
+            return matches && isTokenNotExpired(token);
         }
-        return StringUtils.equals(username, userDetails.getUsername()) && !isTokenExpired(token);
+        return Strings.CS.equals(username, userDetails.getUsername()) && isTokenNotExpired(token);
     }
 
     private Claims getAllClaimsFromToken(String token) {

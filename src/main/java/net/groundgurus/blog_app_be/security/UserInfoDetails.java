@@ -1,18 +1,21 @@
 package net.groundgurus.blog_app_be.security;
 
+import lombok.Getter;
 import net.groundgurus.blog_app_be.model.UserInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static net.groundgurus.blog_app_be.constants.BlogConstants.COMMA;
+import static net.groundgurus.blog_app_be.constants.BlogConstants.ROLE_USER;
+
+@Getter
 public class UserInfoDetails implements UserDetails {
-    public static final String COMMA = ",";
     private final String username;
     private final String email;
     private final String password;
@@ -27,25 +30,6 @@ public class UserInfoDetails implements UserDetails {
                     .map(String::trim)
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList())
-                : List.of(new SimpleGrantedAuthority("ROLE_USER"));
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
+                : List.of(new SimpleGrantedAuthority(ROLE_USER));
     }
 }
