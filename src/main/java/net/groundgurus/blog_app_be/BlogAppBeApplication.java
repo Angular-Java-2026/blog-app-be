@@ -6,9 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class BlogAppBeApplication {
 
-    static void main(String[] args) {
-        SpringApplication.run(BlogAppBeApplication.class, args);
-    }
+  static void main(String[] args) {
+    SpringApplication.run(BlogAppBeApplication.class, args);
+  }
 
 //    @Bean
 //    public CommandLineRunner runner(ApplicationContext context, BlogService blogService) {

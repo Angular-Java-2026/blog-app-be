@@ -1,10 +1,10 @@
 package net.groundgurus.blog_app_be.repository;
 
+import java.util.Optional;
 import net.groundgurus.blog_app_be.model.UserInfo;
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.Optional;
-
 public interface UserInfoRepository extends CrudRepository<UserInfo, Long> {
-    Optional<UserInfo> findByEmailOrUsername(String email, String username);
+
+  Optional<UserInfo> findByEmailOrUsername(String email, String username);
 }
